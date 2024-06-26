@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            padding: 20px;
+        }
+        .button {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 17px;
+        }
+        .button:hover {
+            background-color: #006699;
+        }
+        .input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .container2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo {
+            width: 200px;
+            height: 200px;
+        }
+
+        h1 {
+            font-size: 23px;
+            border: 2px solid;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container2">
+        <img class="logo" src="/1.png" alt="Logo">
+    </div>
+    <div class="container">
+        <h1>Проверка доступности сайтов</h1>
+        <button class="button" onclick="showSites()">Показать сайты</button>
+        <button class="button" onclick="addSite()">Добавить сайт</button>
+        <button class="button" onclick="removeSite()">Удалить сайт</button>
+        <button class="button" onclick="checkSitesNow()">Проверить сайты сейчас</button>
+        <button class="button" onclick="showLogs()">Последние логи проверки</button>
+        <button class="button" onclick="changeInterval()">Изменить интервал проверки</button>
+        <button class="button" onclick="giveBonus()">Начислить себе премию</button>
+        
+        <div id="inputSection" style="display: none;">
+            <input type="text" id="siteInput" class="input" placeholder="Введите URL сайта">
+            <button class="button" onclick="submitSite()">Подтвердить</button>
+        </div>
+        
+        <div id="resultSection" class="result"></div>
+    </div>
+
+    <script>
+        let sites = [
+            'http://www.rusmedical.events/',
+            'http://gynecology.school/',
+            'http://pediatrics.school/',
+            'http://therapy.school/',
+            'http://journaldoctor.ru/',
+            'http://aestheticgyn.ru/',
+            'http://righttolife.gynecology.school/',
+            'http://obesity.therapy.school/',
+            'http://digestionforum.ru/',
+            'http://pediatricstoday.pediatrics.school/',
+            'http://www.journaltherapy.ru/',
+            'http://journalgynecology.ru/',
+            'http://healthwomanandchild.ru/',
+            'http://creativegynecology.ru/',
+            'http://healthfamily-fest.ru/',
+            'http://eagp.ru/',
+            'http://webinardoctor.ru/',
+            'http://nofearfuture.ru/',
+            'http://educationcenter.moscow/',
+            'http://zhzio.ru',
+            'http://rmevent.ru',
+            'http://pediatricstoday.ru',
+            'http://bitrix.rmevent.ru',
+            'http://bitrixbackup.rmevent.ru',
+            'http://жзио.рф',
+        ];
+        let currentAction = '';
+
+        function showSites() {
+            document.getElementById('resultSection').innerHTML = sites.join('<br>');
+        }
+
+        function addSite() {
+            currentAction = 'add';
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('siteInput').placeholder = 'Введите URL сайта для добавления';
+        }
+
+        function removeSite() {
+            currentAction = 'remove';
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('siteInput').placeholder = 'Введите URL сайта для удаления';
+        }
+
+        async function checkSitesNow() {
+            let results = [];
+            for (let site of sites) {
+                try {
+                    let response = await fetch(site);
+                    if (response.ok) {
+                        results.push(`${site} - доступен`);
+                    } else {
+                        results.push(`${site} - недоступен`);
+                    }
+                } catch (error) {
+                    results.push(`${site} - недоступен`);
+                }
+            }
+            document.getElementById('resultSection').innerHTML = results.join('<br>');
+        }
+
+        function showLogs() {
+            document.getElementById('resultSection').innerHTML = 'Последние логи проверки:';
+        }
+
+        function changeInterval() {
+            currentAction = 'interval';
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('siteInput').placeholder = 'Введите новый интервал проверки в секундах';
+        }
+
+        function giveBonus() {
+            document.getElementById('resultSection').innerHTML = 'Премия начислена!';
+        }
+
+        function submitSite() {
+            const site = document.getElementById('siteInput').value;
+            if (currentAction === 'add') {
+                sites.push(site);
+                document.getElementById('resultSection').innerHTML = `${site} добавлен.`;
+            } else if (currentAction === 'remove') {
+                const index = sites.indexOf(site);
+                if (index > -1) {
+                    sites.splice(index, 1);
+                    document.getElementById('resultSection').innerHTML = `${site} удален.`;
+                } else {
+                    document.getElementById('resultSection').innerHTML = 'Сайт не найден.';
+                }
+            } else if (currentAction === 'interval') {
+                document.getElementById('resultSection').innerHTML = `Интервал проверки изменен на ${site} секунд.`;
+            }
+            document.getElementById('inputSection').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
